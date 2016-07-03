@@ -25,7 +25,7 @@ def Setup():
 
     # Render the layouts
     Render = web.template.render(BaseDir+'/templates/',
-                                 cache=False, globals=globals())
+                                 cache=True, globals=globals())
 
     """Initial server configuration."""
 
@@ -1922,6 +1922,11 @@ def Setup():
         App.notfound = notfound
     except:
         pass
+
+    def internalerror():
+        return web.internalerror(Render.error())
+
+    App.internalerror = internalerror
 
     return App, Render
 
