@@ -1,3 +1,5 @@
+/venv/
 /sessions/*
 *.pyc
-/models.pyc
+config.json
+*.*~
