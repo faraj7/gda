@@ -12,11 +12,11 @@ from random import choice
 
 import web
 import os
-import codecs
 import urllib
 from models import *
 from forms import *
 import re
+from json import load
 
 def Setup():
 
@@ -24,16 +24,16 @@ def Setup():
     CreateDB()
 
     # Render the layouts
-    Render = web.template.render(BaseDir+'/templates/',
+    Render = web.template.render(BaseDir + '/templates/',
                                  cache=True, globals=globals())
 
     """Initial server configuration."""
-
+    config = load(open('config.json'))
     # Initialize mailing features
     web.config.smtp_server = 'smtp.gmail.com'
     web.config.smtp_port = 587
     web.config.smtp_username = 'gda.noreply@gmail.com'
-    web.config.smtp_password = 'provasantigas2016'
+    web.config.smtp_password = config['smtp_password']
     web.config.smtp_starttls = True
 
     # initialize the application
@@ -50,7 +50,7 @@ def Setup():
         App.add_mapping(URL.lower().replace(
             " ", "_").decode("utf8"), URL)
         App.add_mapping(URL.lower().replace(
-            " ", "_").decode("utf8")+"/", URL)
+            " ", "_").decode("utf8") + "/", URL)
 
     def POSTParse(RawPost):
         """Parse POST Filds into dict."""
@@ -105,9 +105,8 @@ def Setup():
                 return False
 
 #recebe dicionário com respostas e atualiza lista de comentários
-    def CommitComment(Inst ,Response):
+    def CommitComment(Inst, Response):
         """Submit a comment to an instance"""
-
 
         LocDB = create_engine(UserDB, echo=False)
         LocS = sessionmaker(bind=LocDB)()
